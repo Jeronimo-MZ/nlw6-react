@@ -1,8 +1,13 @@
 import React from "react";
-import { Home } from "./pages/Home";
+import { AuthContextProvider } from "./contexts/AuthContext";
+import { Routes } from "./routes";
 
 function App() {
-    return <Home />;
+    return (
+        <AuthContextProvider>
+            <Routes />;
+        </AuthContextProvider>
+    );
 }
 
 export default App;
