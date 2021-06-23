@@ -5,7 +5,7 @@ import { Routes } from "./routes";
 function App() {
     return (
         <AuthContextProvider>
-            <Routes />;
+            <Routes />
         </AuthContextProvider>
     );
 }
