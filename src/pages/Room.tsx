@@ -2,6 +2,7 @@ import { FormEvent, useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import logoImg from "../assets/images/logo.svg";
 import { Button } from "../components/Button";
+import { Question } from "../components/Question";
 import { RoomCode } from "../components/RoomCode";
 import { useAuth } from "../hooks/useAuth";
 import { database } from "../services/firebase";
@@ -11,7 +12,7 @@ interface RoomParams {
     id: string;
 }
 
-interface Question {
+interface IQuestion {
     id: string;
     content: string;
     isHighlighted: boolean;
@@ -21,12 +22,12 @@ interface Question {
         avatar: string;
     };
 }
-type firebaseQuestions = Record<string, Omit<Question, "id">>;
+type firebaseQuestions = Record<string, Omit<IQuestion, "id">>;
 
 export function Room() {
     const params = useParams<RoomParams>();
     const roomId = params.id;
-    const [questions, setQuestions] = useState<Question[]>([]);
+    const [questions, setQuestions] = useState<IQuestion[]>([]);
     const [title, setTitle] = useState("");
 
     const [newQuestion, setNewQuestion] = useState("");
@@ -117,7 +118,15 @@ export function Room() {
                     </footer>
                 </form>
 
-                {JSON.stringify(questions)}
+                <div className="question-list">
+                    {questions.map((question) => (
+                        <Question
+                            key={question.id}
+                            author={question.author}
+                            content={question.content}
+                        />
+                    ))}
+                </div>
             </main>
         </div>
     );
