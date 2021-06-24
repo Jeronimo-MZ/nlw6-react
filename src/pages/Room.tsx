@@ -23,19 +23,6 @@ interface Question {
 }
 type firebaseQuestions = Record<string, Omit<Question, "id">>;
 
-// type firebaseQuestions = Record<
-//     string,
-//     {
-//         content: string;
-//         isHighlighted: boolean;
-//         isAnswered: boolean;
-//         author: {
-//             name: string;
-//             avatar: string;
-//         };
-//     }
-// >;
-
 export function Room() {
     const params = useParams<RoomParams>();
     const roomId = params.id;
