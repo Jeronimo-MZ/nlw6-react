@@ -1,14 +1,19 @@
 import { useCallback } from "react";
 import { useHistory, useParams } from "react-router";
-import logoImg from "../assets/images/logo.svg";
+
 import { Button } from "../components/Button";
 import { Question } from "../components/Question";
 import { RoomCode } from "../components/RoomCode";
-import { useAuth } from "../hooks/useAuth";
-import { useRoom } from "../hooks/useRoom";
-import "../styles/room.scss";
-import deleteImg from "../assets/images/delete.svg";
 import { database } from "../services/firebase";
+// import { useAuth } from "../hooks/useAuth";
+import { useRoom } from "../hooks/useRoom";
+
+import "../styles/room.scss";
+
+import logoImg from "../assets/images/logo.svg";
+import deleteImg from "../assets/images/delete.svg";
+import checkImg from "../assets/images/check.svg";
+import answerImg from "../assets/images/answer.svg";
 
 interface RoomParams {
     id: string;
@@ -28,6 +33,28 @@ export function AdminRoom() {
         });
         history.push("/");
     }, [roomId, history]);
+
+    const handleCheckQuestionAsAnswered = useCallback(
+        async (questionId: string) => {
+            await database
+                .ref(`rooms/${roomId}/questions/${questionId}`)
+                .update({
+                    isAnswered: true,
+                });
+        },
+        [roomId]
+    );
+
+    const handleToggleHighlightQuestion = useCallback(
+        async (questionId: string, isHighlighted: boolean) => {
+            await database
+                .ref(`rooms/${roomId}/questions/${questionId}`)
+                .update({
+                    isHighlighted: !isHighlighted,
+                });
+        },
+        [roomId]
+    );
 
     const handleDeleteQuestion = useCallback(
         async (questionId: string) => {
@@ -69,12 +96,48 @@ export function AdminRoom() {
                             key={question.id}
                             author={question.author}
                             content={question.content}
+                            isAnswered={question.isAnswered}
+                            isHighlighted={question.isHighlighted}
                         >
+                            {!question.isAnswered && (
+                                <>
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            handleCheckQuestionAsAnswered(
+                                                question.id
+                                            )
+                                        }
+                                        aria-label="Marcar pergunta como respondida"
+                                    >
+                                        <img
+                                            src={checkImg}
+                                            alt="Marcar pergunta como respondida"
+                                        />
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            handleToggleHighlightQuestion(
+                                                question.id,
+                                                question.isHighlighted
+                                            )
+                                        }
+                                        aria-label="Dar destaque a pergunta"
+                                    >
+                                        <img
+                                            src={answerImg}
+                                            alt="Dar destaque a pergunta"
+                                        />
+                                    </button>
+                                </>
+                            )}
                             <button
                                 type="button"
                                 onClick={() =>
                                     handleDeleteQuestion(question.id)
                                 }
+                                aria-label="Remover pergunta"
                             >
                                 <img src={deleteImg} alt="Remover pergunta" />
                             </button>
