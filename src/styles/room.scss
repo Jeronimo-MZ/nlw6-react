@@ -13,6 +13,16 @@
             & > img {
                 max-height: 4.5rem;
             }
+
+            & > div {
+                display: flex;
+                align-items: center;
+                gap: 2rem;
+
+                button {
+                    height: 4rem;
+                }
+            }
         }
     }
     main {
