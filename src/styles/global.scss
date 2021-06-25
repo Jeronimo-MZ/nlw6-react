@@ -6,10 +6,16 @@
 
 :root {
     font-size: 62.5%;
+    --background: #f8f8f8;
+    --color-primary: #835afd;
+    --color-primary-light: #e559f9;
+    --color-text: #29292e;
+    --color-primary-white: #fff;
+    --color-grey: #a8a8b3;
 }
 body {
-    background-color: #f8f8f8;
-    color: #29292e;
+    background-color: var(--background);
+    color: var(--color-text);
 }
 
 body,
