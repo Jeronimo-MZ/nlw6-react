@@ -40,6 +40,7 @@ type firebaseQuestions = Record<
 export function useRoom(roomId: string) {
     const { user } = useAuth();
     const [questions, setQuestions] = useState<IQuestion[]>([]);
+    const [authorId, setAuthorId] = useState("");
     const [title, setTitle] = useState("");
 
     useEffect(() => {
@@ -47,6 +48,7 @@ export function useRoom(roomId: string) {
 
         roomRef.on("value", (room) => {
             const databaseRoom = room.val();
+            setAuthorId(databaseRoom.authorId);
             const firebaseQuestions: firebaseQuestions = databaseRoom.questions;
 
             const parsedQuestions = Object.entries(firebaseQuestions ?? {}).map(
@@ -73,5 +75,5 @@ export function useRoom(roomId: string) {
         };
     }, [roomId, user?.id]);
 
-    return { questions, title };
+    return { questions, title, authorId };
 }

@@ -1,11 +1,11 @@
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { useHistory, useParams } from "react-router";
 
 import { Button } from "../components/Button";
 import { Question } from "../components/Question";
 import { RoomCode } from "../components/RoomCode";
 import { database } from "../services/firebase";
-// import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../hooks/useAuth";
 import { useRoom } from "../hooks/useRoom";
 
 import "../styles/room.scss";
@@ -22,10 +22,18 @@ interface RoomParams {
 export function AdminRoom() {
     const params = useParams<RoomParams>();
     const roomId = params.id;
-    const { questions, title } = useRoom(roomId);
+    const { questions, title, authorId } = useRoom(roomId);
     const history = useHistory();
 
-    // const { user } = useAuth();
+    const { user } = useAuth();
+
+    useEffect(() => {
+        if (!!authorId) {
+            if (authorId !== user?.id) {
+                history.replace(`/rooms/${roomId}`);
+            }
+        }
+    }, [user, authorId, roomId, history]);
 
     const handleCloseRoom = useCallback(async () => {
         await database.ref(`rooms/${roomId}`).update({
@@ -76,9 +84,11 @@ export function AdminRoom() {
                     <img src={logoImg} alt="Let me ask" />
                     <div>
                         <RoomCode code={roomId} />
-                        <Button isOutlined onClick={handleCloseRoom}>
-                            Encerrar Sala
-                        </Button>
+                        {!!user && authorId === user.id && (
+                            <Button isOutlined onClick={handleCloseRoom}>
+                                Encerrar Sala
+                            </Button>
+                        )}
                     </div>
                 </div>
             </header>
@@ -109,6 +119,7 @@ export function AdminRoom() {
                                             )
                                         }
                                         aria-label="Marcar pergunta como respondida"
+                                        title="Marcar como respondida"
                                     >
                                         <img
                                             src={checkImg}
@@ -124,6 +135,7 @@ export function AdminRoom() {
                                             )
                                         }
                                         aria-label="Dar destaque a pergunta"
+                                        title="Destacar"
                                     >
                                         <img
                                             src={answerImg}
@@ -138,6 +150,7 @@ export function AdminRoom() {
                                     handleDeleteQuestion(question.id)
                                 }
                                 aria-label="Remover pergunta"
+                                title="Remover"
                             >
                                 <img src={deleteImg} alt="Remover pergunta" />
                             </button>
