@@ -1,5 +1,5 @@
 import { FormEvent, useCallback, useState } from "react";
-import { useParams } from "react-router";
+import { useParams, useHistory } from "react-router";
 
 import { Button } from "../components/Button";
 import { Question } from "../components/Question";
@@ -22,7 +22,8 @@ interface RoomParams {
 export function Room() {
     const params = useParams<RoomParams>();
     const roomId = params.id;
-    const { questions, title } = useRoom(roomId);
+    const history = useHistory();
+    const { questions, title, authorId } = useRoom(roomId);
 
     const [newQuestion, setNewQuestion] = useState("");
     const { user, signInWithGoogle, logout } = useAuth();
@@ -79,12 +80,23 @@ export function Room() {
         await signInWithGoogle();
     }, [signInWithGoogle]);
 
+    const handleOpenAdminRoom = useCallback(() => {
+        history.push(`/admin/rooms/${roomId}`);
+    }, [roomId, history]);
+
     return (
         <div id="page-room">
             <header>
                 <div className="content">
                     <img src={logoImg} alt="Let me ask" />
-                    <RoomCode code={roomId} />
+                    <div>
+                        <RoomCode code={roomId} />
+                        {!!user && authorId === user.id && (
+                            <Button isOutlined onClick={handleOpenAdminRoom}>
+                                Administrar
+                            </Button>
+                        )}
+                    </div>
                 </div>
             </header>
             <main>
