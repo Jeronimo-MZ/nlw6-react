@@ -14,6 +14,7 @@ import { ReactComponent as LogoutImg } from "../assets/images/log-out.svg";
 import logoImg from "../assets/images/logo.svg";
 
 import "../styles/room.scss";
+import { Link } from "react-router-dom";
 
 interface RoomParams {
     id: string;
@@ -88,7 +89,9 @@ export function Room() {
         <div id="page-room">
             <header>
                 <div className="content">
-                    <img src={logoImg} alt="Let me ask" />
+                    <Link to="/">
+                        <img src={logoImg} alt="Let me ask" />
+                    </Link>
                     <div>
                         <RoomCode code={roomId} />
                         {!!user && authorId === user.id && (

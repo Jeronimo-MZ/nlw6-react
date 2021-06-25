@@ -14,6 +14,7 @@ import logoImg from "../assets/images/logo.svg";
 import deleteImg from "../assets/images/delete.svg";
 import checkImg from "../assets/images/check.svg";
 import answerImg from "../assets/images/answer.svg";
+import { Link } from "react-router-dom";
 
 interface RoomParams {
     id: string;
@@ -81,7 +82,9 @@ export function AdminRoom() {
         <div id="page-room">
             <header>
                 <div className="content">
-                    <img src={logoImg} alt="Let me ask" />
+                    <Link to="/">
+                        <img src={logoImg} alt="Let me ask" />
+                    </Link>
                     <div>
                         <RoomCode code={roomId} />
                         {!!user && authorId === user.id && (
