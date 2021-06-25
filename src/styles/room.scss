@@ -84,6 +84,18 @@
                         font-weight: 500;
                         font-size: 1.4rem;
                     }
+
+                    button {
+                        background: none;
+                        border: none;
+                        font-size: 0;
+                        margin-left: 0.5rem;
+                        cursor: pointer;
+
+                        svg {
+                            height: 1.6rem;
+                        }
+                    }
                 }
 
                 & > span {

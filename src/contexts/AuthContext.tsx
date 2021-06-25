@@ -9,6 +9,7 @@ interface IUser {
 interface AuthContextData {
     signInWithGoogle: () => Promise<void>;
     user: IUser | undefined;
+    logout: () => Promise<void>;
 }
 
 export const AuthContext = createContext({} as AuthContextData);
@@ -58,11 +59,17 @@ export const AuthContextProvider: React.FC = ({ children }) => {
         }
     }, []);
 
+    const logout = useCallback(async () => {
+        await auth.signOut();
+        setUser(undefined);
+    }, []);
+
     return (
         <AuthContext.Provider
             value={{
                 signInWithGoogle,
                 user,
+                logout,
             }}
         >
             {children}

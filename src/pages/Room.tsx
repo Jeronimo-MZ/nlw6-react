@@ -1,12 +1,18 @@
 import { FormEvent, useCallback, useState } from "react";
 import { useParams } from "react-router";
-import logoImg from "../assets/images/logo.svg";
+
 import { Button } from "../components/Button";
 import { Question } from "../components/Question";
 import { RoomCode } from "../components/RoomCode";
+
 import { useAuth } from "../hooks/useAuth";
 import { useRoom } from "../hooks/useRoom";
+
 import { database } from "../services/firebase";
+
+import { ReactComponent as LogoutImg } from "../assets/images/log-out.svg";
+import logoImg from "../assets/images/logo.svg";
+
 import "../styles/room.scss";
 
 interface RoomParams {
@@ -19,7 +25,7 @@ export function Room() {
     const { questions, title } = useRoom(roomId);
 
     const [newQuestion, setNewQuestion] = useState("");
-    const { user } = useAuth();
+    const { user, signInWithGoogle, logout } = useAuth();
 
     const handleSendQuestion = useCallback(
         async (event: FormEvent) => {
@@ -65,6 +71,14 @@ export function Room() {
         [user?.id, roomId]
     );
 
+    const handleLogout = useCallback(async () => {
+        await logout();
+    }, [logout]);
+
+    const handleSignIn = useCallback(async () => {
+        await signInWithGoogle();
+    }, [signInWithGoogle]);
+
     return (
         <div id="page-room">
             <header>
@@ -92,11 +106,22 @@ export function Room() {
                             <div className="user-info">
                                 <img src={user.avatar} alt={user.name} />
                                 <span>{user.name}</span>
+                                <button
+                                    type="button"
+                                    className="logout-button"
+                                    aria-label="deslogar"
+                                    onClick={handleLogout}
+                                >
+                                    <LogoutImg />
+                                </button>
                             </div>
                         ) : (
                             <span>
                                 Para enviar sua pergunta,{" "}
-                                <button>Faça seu login</button>.
+                                <button onClick={handleSignIn}>
+                                    Faça seu login
+                                </button>
+                                .
                             </span>
                         )}
                         <Button type="submit" disabled={!user}>
