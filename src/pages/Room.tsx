@@ -56,6 +56,9 @@ export function Room() {
 
     const handleLikeQuestion = useCallback(
         async (questionId: string, likeId: string | undefined) => {
+            if (!user) {
+                return;
+            }
             if (!!likeId) {
                 await database
                     .ref(
@@ -161,6 +164,8 @@ export function Room() {
                                     }`}
                                     type="button"
                                     aria-label="Marcar como gostei"
+                                    title="Gostei"
+                                    disabled={!user}
                                     onClick={() => {
                                         handleLikeQuestion(
                                             question.id,

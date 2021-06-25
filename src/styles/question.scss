@@ -66,6 +66,10 @@
                 color: #737380;
                 gap: 0.5rem;
 
+                &:disabled {
+                    cursor: not-allowed;
+                }
+
                 &.liked {
                     color: #835afd;
 
