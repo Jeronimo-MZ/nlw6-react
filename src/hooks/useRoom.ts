@@ -67,9 +67,7 @@ export function useRoom(roomId: string) {
                 }
             );
 
-            if (databaseRoom?.closed_at) {
-                setIsClosed(true);
-            }
+            setIsClosed(!!databaseRoom?.closed_at);
 
             setAuthorId(databaseRoom.authorId);
 

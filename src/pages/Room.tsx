@@ -1,4 +1,4 @@
-import { FormEvent, useCallback, useEffect, useState } from "react";
+import { FormEvent, useCallback, useState } from "react";
 import { useParams, useHistory } from "react-router";
 
 import { Button } from "../components/Button";
