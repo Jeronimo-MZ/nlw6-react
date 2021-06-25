@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router";
 
 import { Button } from "../components/Button";
@@ -23,9 +23,8 @@ interface RoomParams {
 export function AdminRoom() {
     const params = useParams<RoomParams>();
     const roomId = params.id;
-    const { questions, title, authorId } = useRoom(roomId);
+    const { questions, title, authorId, isClosed } = useRoom(roomId);
     const history = useHistory();
-
     const { user } = useAuth();
 
     useEffect(() => {
@@ -87,7 +86,7 @@ export function AdminRoom() {
                     </Link>
                     <div>
                         <RoomCode code={roomId} />
-                        {!!user && authorId === user.id && (
+                        {!!user && authorId === user.id && !isClosed && (
                             <Button isOutlined onClick={handleCloseRoom}>
                                 Encerrar Sala
                             </Button>
@@ -97,7 +96,11 @@ export function AdminRoom() {
             </header>
             <main>
                 <div className="room-title">
-                    <h1>Sala {title}</h1>
+                    <h1>
+                        Sala{" "}
+                        {title && <Link to={`/rooms/${roomId}`}>{title}</Link>}
+                        {isClosed && " [Sala Encerrada]"}
+                    </h1>
                     {questions?.length > 0 && (
                         <span>{questions?.length} perguntas</span>
                     )}

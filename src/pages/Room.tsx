@@ -1,4 +1,4 @@
-import { FormEvent, useCallback, useState } from "react";
+import { FormEvent, useCallback, useEffect, useState } from "react";
 import { useParams, useHistory } from "react-router";
 
 import { Button } from "../components/Button";
@@ -24,7 +24,7 @@ export function Room() {
     const params = useParams<RoomParams>();
     const roomId = params.id;
     const history = useHistory();
-    const { questions, title, authorId } = useRoom(roomId);
+    const { questions, title, authorId, isClosed } = useRoom(roomId);
 
     const [newQuestion, setNewQuestion] = useState("");
     const { user, signInWithGoogle, logout } = useAuth();
@@ -73,7 +73,7 @@ export function Room() {
                     });
             }
         },
-        [user?.id, roomId]
+        [roomId, user]
     );
 
     const handleLogout = useCallback(async () => {
@@ -107,46 +107,52 @@ export function Room() {
             </header>
             <main>
                 <div className="room-title">
-                    <h1>Sala {title}</h1>
+                    <h1>
+                        Sala {title}
+                        {isClosed && " [Sala Encerrada]"}
+                    </h1>
                     {questions?.length > 0 && (
                         <span>{questions?.length} perguntas</span>
                     )}
                 </div>
-
-                <form onSubmit={handleSendQuestion}>
-                    <textarea
-                        placeholder="O que você quer perguntar?"
-                        onChange={(event) => setNewQuestion(event.target.value)}
-                        value={newQuestion}
-                    />
-                    <footer>
-                        {user ? (
-                            <div className="user-info">
-                                <img src={user.avatar} alt={user.name} />
-                                <span>{user.name}</span>
-                                <button
-                                    type="button"
-                                    className="logout-button"
-                                    aria-label="deslogar"
-                                    onClick={handleLogout}
-                                >
-                                    <LogoutImg />
-                                </button>
-                            </div>
-                        ) : (
-                            <span>
-                                Para enviar sua pergunta,{" "}
-                                <button onClick={handleSignIn}>
-                                    Faça seu login
-                                </button>
-                                .
-                            </span>
-                        )}
-                        <Button type="submit" disabled={!user}>
-                            Enviar Pergunta
-                        </Button>
-                    </footer>
-                </form>
+                {isClosed !== undefined && !isClosed && (
+                    <form onSubmit={handleSendQuestion}>
+                        <textarea
+                            placeholder="O que você quer perguntar?"
+                            onChange={(event) =>
+                                setNewQuestion(event.target.value)
+                            }
+                            value={newQuestion}
+                        />
+                        <footer>
+                            {user ? (
+                                <div className="user-info">
+                                    <img src={user.avatar} alt={user.name} />
+                                    <span>{user.name}</span>
+                                    <button
+                                        type="button"
+                                        className="logout-button"
+                                        aria-label="deslogar"
+                                        onClick={handleLogout}
+                                    >
+                                        <LogoutImg />
+                                    </button>
+                                </div>
+                            ) : (
+                                <span>
+                                    Para enviar sua pergunta,{" "}
+                                    <button onClick={handleSignIn}>
+                                        Faça seu login
+                                    </button>
+                                    .
+                                </span>
+                            )}
+                            <Button type="submit" disabled={!user}>
+                                Enviar Pergunta
+                            </Button>
+                        </footer>
+                    </form>
+                )}
 
                 <div className="question-list">
                     {questions.map((question) => (

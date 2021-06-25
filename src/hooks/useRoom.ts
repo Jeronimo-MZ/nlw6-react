@@ -42,13 +42,13 @@ export function useRoom(roomId: string) {
     const [questions, setQuestions] = useState<IQuestion[]>([]);
     const [authorId, setAuthorId] = useState("");
     const [title, setTitle] = useState("");
+    const [isClosed, setIsClosed] = useState<boolean>();
 
     useEffect(() => {
         const roomRef = database.ref(`rooms/${roomId}`);
 
         roomRef.on("value", (room) => {
             const databaseRoom = room.val();
-            setAuthorId(databaseRoom.authorId);
             const firebaseQuestions: firebaseQuestions = databaseRoom.questions;
 
             const parsedQuestions = Object.entries(firebaseQuestions ?? {}).map(
@@ -66,6 +66,13 @@ export function useRoom(roomId: string) {
                     };
                 }
             );
+
+            if (databaseRoom?.closed_at) {
+                setIsClosed(true);
+            }
+
+            setAuthorId(databaseRoom.authorId);
+
             setTitle(databaseRoom.title);
             setQuestions(parsedQuestions);
         });
@@ -75,5 +82,5 @@ export function useRoom(roomId: string) {
         };
     }, [roomId, user?.id]);
 
-    return { questions, title, authorId };
+    return { questions, title, authorId, isClosed };
 }
