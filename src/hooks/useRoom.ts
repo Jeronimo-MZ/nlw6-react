@@ -72,13 +72,17 @@ export function useRoom(roomId: string) {
             setAuthorId(databaseRoom.authorId);
 
             setTitle(databaseRoom.title);
-            setQuestions(parsedQuestions);
+            setQuestions(
+                parsedQuestions.sort(
+                    (question1, question2) =>
+                        question2.likeCount - question1.likeCount
+                )
+            );
         });
 
         return () => {
             roomRef.off("value");
         };
     }, [roomId, user?.id]);
-
     return { questions, title, authorId, isClosed };
 }
