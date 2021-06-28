@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { database } from "../services/firebase";
 import { useAuth } from "./useAuth";
 
-interface IQuestion {
+export interface IQuestion {
     id: string;
     content: string;
     isHighlighted: boolean;
@@ -40,13 +40,6 @@ type firebaseQuestions = Record<
 export function useRoom(roomId: string) {
     const { user } = useAuth();
     const [questions, setQuestions] = useState<IQuestion[]>([]);
-    const [notFlaggedQuestions, setNotFlaggedQuestions] = useState<IQuestion[]>(
-        []
-    );
-    const [answeredQuestions, setAnsweredQuestions] = useState<IQuestion[]>([]);
-    const [highlightedQuestions, setHighlightedQuestions] = useState<
-        IQuestion[]
-    >([]);
     const [authorId, setAuthorId] = useState("");
     const [title, setTitle] = useState("");
     const [isClosed, setIsClosed] = useState<boolean>();
@@ -86,22 +79,7 @@ export function useRoom(roomId: string) {
             );
             setQuestions(sortedQuestions);
 
-            setNotFlaggedQuestions(
-                sortedQuestions.filter(
-                    (question) =>
-                        !question.isAnswered && !question.isHighlighted
-                )
-            );
-
-            setHighlightedQuestions(
-                sortedQuestions.filter(
-                    (question) => question.isHighlighted && !question.isAnswered
-                )
-            );
-
-            setAnsweredQuestions(
-                sortedQuestions.filter((question) => question.isAnswered)
-            );
+            
         });
 
         return () => {
@@ -110,9 +88,6 @@ export function useRoom(roomId: string) {
     }, [roomId, user?.id]);
     return {
         questions,
-        notFlaggedQuestions,
-        answeredQuestions,
-        highlightedQuestions,
         title,
         authorId,
         isClosed,

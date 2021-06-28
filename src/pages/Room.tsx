@@ -6,7 +6,7 @@ import { Question } from "../components/Question";
 import { RoomCode } from "../components/RoomCode";
 
 import { useAuth } from "../hooks/useAuth";
-import { useRoom } from "../hooks/useRoom";
+import { useRoom, IQuestion } from "../hooks/useRoom";
 
 import { database } from "../services/firebase";
 
@@ -24,15 +24,15 @@ export function Room() {
     const params = useParams<RoomParams>();
     const roomId = params.id;
     const history = useHistory();
-    const {
-        questions,
-        title,
-        authorId,
-        isClosed,
-        highlightedQuestions,
-        notFlaggedQuestions,
-        answeredQuestions,
-    } = useRoom(roomId);
+    const [notFlaggedQuestions, setNotFlaggedQuestions] = useState<IQuestion[]>(
+        []
+    );
+    const [answeredQuestions, setAnsweredQuestions] = useState<IQuestion[]>([]);
+    const [highlightedQuestions, setHighlightedQuestions] = useState<
+        IQuestion[]
+    >([]);
+
+    const { questions, title, authorId, isClosed } = useRoom(roomId);
 
     const [newQuestion, setNewQuestion] = useState("");
     const { user, signInWithGoogle, logout } = useAuth();
@@ -95,6 +95,24 @@ export function Room() {
     const handleOpenAdminRoom = useCallback(() => {
         history.push(`/admin/rooms/${roomId}`);
     }, [roomId, history]);
+
+    useEffect(() => {
+        setNotFlaggedQuestions(
+            questions.filter(
+                (question) => !question.isAnswered && !question.isHighlighted
+            )
+        );
+
+        setHighlightedQuestions(
+            questions.filter(
+                (question) => question.isHighlighted && !question.isAnswered
+            )
+        );
+
+        setAnsweredQuestions(
+            questions.filter((question) => question.isAnswered)
+        );
+    }, [questions]);
 
     return (
         <div id="page-room">
