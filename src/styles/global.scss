@@ -24,3 +24,9 @@ button,
 textarea {
     font: 400 1.6rem "Roboto", sans-serif;
 }
+
+@media (max-width: 850px) {
+    :root {
+        font-size: 55%;
+    }
+}

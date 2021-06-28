@@ -13,6 +13,7 @@
         justify-content: center;
         padding: 12rem 8rem;
         img {
+            width: 100%;
             max-width: 32rem;
         }
 
@@ -37,11 +38,13 @@
         align-items: center;
         justify-content: center;
     }
+
     .main-content {
         display: flex;
         flex-direction: column;
         width: 100%;
         max-width: 32rem;
+        min-width: 32rem;
         align-items: stretch;
         text-align: center;
 
@@ -129,6 +132,15 @@
                 color: var(--color-primary-light);
                 text-decoration: underline;
             }
+        }
+    }
+
+    @media (max-width: 700px) {
+        aside {
+            display: none;
+        }
+        main {
+            padding: 0 0.5rem;
         }
     }
 }
