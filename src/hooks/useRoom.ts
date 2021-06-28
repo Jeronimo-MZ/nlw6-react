@@ -40,6 +40,13 @@ type firebaseQuestions = Record<
 export function useRoom(roomId: string) {
     const { user } = useAuth();
     const [questions, setQuestions] = useState<IQuestion[]>([]);
+    const [notFlaggedQuestions, setNotFlaggedQuestions] = useState<IQuestion[]>(
+        []
+    );
+    const [answeredQuestions, setAnsweredQuestions] = useState<IQuestion[]>([]);
+    const [highlightedQuestions, setHighlightedQuestions] = useState<
+        IQuestion[]
+    >([]);
     const [authorId, setAuthorId] = useState("");
     const [title, setTitle] = useState("");
     const [isClosed, setIsClosed] = useState<boolean>();
@@ -72,11 +79,28 @@ export function useRoom(roomId: string) {
             setAuthorId(databaseRoom.authorId);
 
             setTitle(databaseRoom.title);
-            setQuestions(
-                parsedQuestions.sort(
-                    (question1, question2) =>
-                        question2.likeCount - question1.likeCount
+
+            const sortedQuestions = parsedQuestions.sort(
+                (question1, question2) =>
+                    question2.likeCount - question1.likeCount
+            );
+            setQuestions(sortedQuestions);
+
+            setNotFlaggedQuestions(
+                sortedQuestions.filter(
+                    (question) =>
+                        !question.isAnswered && !question.isHighlighted
                 )
+            );
+
+            setHighlightedQuestions(
+                sortedQuestions.filter(
+                    (question) => question.isHighlighted && !question.isAnswered
+                )
+            );
+
+            setAnsweredQuestions(
+                sortedQuestions.filter((question) => question.isAnswered)
             );
         });
 
@@ -84,5 +108,13 @@ export function useRoom(roomId: string) {
             roomRef.off("value");
         };
     }, [roomId, user?.id]);
-    return { questions, title, authorId, isClosed };
+    return {
+        questions,
+        notFlaggedQuestions,
+        answeredQuestions,
+        highlightedQuestions,
+        title,
+        authorId,
+        isClosed,
+    };
 }
